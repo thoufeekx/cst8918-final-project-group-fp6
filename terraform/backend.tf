@@ -1,9 +1,8 @@
 terraform {
   backend "azurerm" {
-    # These values must be configured during initialization
-    # resource_group_name  = "tfstate-rg"
-    # storage_account_name = "tfstate<unique_suffix>"
-    # container_name       = "tfstate"
-    # key                 = "terraform.tfstate"
+    resource_group_name  = "tfstate-fp6-rg"
+    storage_account_name = "tfstatepbo79qfk"
+    container_name       = "tfstate"
+    key                 = "terraform.tfstate"
   }
 }

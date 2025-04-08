@@ -1,7 +1,7 @@
 module "backend" {
   source = "../modules/backend"
 
-  resource_group_name  = "tfstate-rg"
+  resource_group_name  = "tfstate-fp6-rg"
   storage_account_name = "tfstate${random_string.suffix.result}"
   container_name      = "tfstate"
   location            = "eastus"
