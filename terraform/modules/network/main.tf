@@ -49,7 +49,7 @@ resource "azurerm_subnet" "admin" {
 
 # Network Security Group for AKS
 resource "azurerm_network_security_group" "aks" {
-  name                = "${var.cluster_name}-nsg"
+  name                = "${var.vnet_name}-nsg"
   location            = var.location
   resource_group_name = var.resource_group_name
 
