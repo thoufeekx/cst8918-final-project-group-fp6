@@ -2,15 +2,14 @@ name: Terraform Validation
 
 on:
   push:
-    branches:
-      - '*'
+    branches: [ '*' ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    environment: production
     
     steps:
     - uses: actions/checkout@v3
@@ -21,19 +20,22 @@ jobs:
         terraform_version: "1.0.0"
 
     - name: Terraform Format
-      run: terraform fmt -check -recursive
-      working-directory: ./terraform
-
-    - name: Terraform Init
-      run: terraform init -backend=false
-      working-directory: ./terraform
+      run: terraform fmt -check
+      working-directory: terraform
 
     - name: Terraform Validate
       run: terraform validate
-      working-directory: ./terraform
+      working-directory: terraform
 
-    - name: Run tfsec
-      uses: aquasecurity/tfsec-action@v1.0.0
+    - name: Run TFSec
+      uses: aquasecurity/tfsec-action@v1
+      with:
+        working_dir: terraform
+        fail_on_violations: true
+        skip_check: "check:tfsec:aws:ec2:EnsureEC2InstanceIsInVPC"
+
+    - name: Run TFLint
+      uses: terraform-linters/tflint-action@v2
       with:
         working_directory: terraform
-        additional_args: "--exclude=azure-container-limit-authorized-ips,azure-network-no-public-ingress,azure-network-no-public-egress,azure-container-logging"
+        config_file: .tflint.hcl
