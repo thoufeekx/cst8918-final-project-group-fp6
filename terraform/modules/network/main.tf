@@ -49,19 +49,31 @@ resource "azurerm_subnet" "admin" {
 
 # Network Security Group for AKS
 resource "azurerm_network_security_group" "aks" {
-  name                = "aks-nsg"
-  location            = azurerm_resource_group.network.location
-  resource_group_name = azurerm_resource_group.network.name
+  name                = "${var.cluster_name}-nsg"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   security_rule {
-    name                       = "allow-https"
+    name                       = "allow-aks-outbound"
     priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "allow-aks-inbound"
+    priority                   = 200
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
+    source_address_prefix      = var.allowed_cidr
     destination_address_prefix = "*"
   }
 

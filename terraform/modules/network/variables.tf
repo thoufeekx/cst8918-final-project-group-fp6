@@ -19,3 +19,9 @@ variable "vnet_cidr" {
   description = "CIDR block for the virtual network"
   default     = "10.0.0.0/14" # As per requirements
 }
+
+variable "allowed_cidr" {
+  description = "CIDR range allowed to access the AKS cluster"
+  type        = string
+  default     = "0.0.0.0/0"
+}

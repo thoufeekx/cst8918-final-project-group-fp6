@@ -22,6 +22,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
+    network_policy    = "azure"
+  }
+
+  api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
+
+  addon_profile {
+    oms_agent {
+      enabled = true
+    }
   }
 
   role_based_access_control_enabled = true

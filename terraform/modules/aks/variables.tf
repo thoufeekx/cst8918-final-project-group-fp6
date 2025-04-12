@@ -52,3 +52,9 @@ variable "acr_id" {
   type        = string
   description = "ID of the Azure Container Registry"
 }
+
+variable "api_server_authorized_ip_ranges" {
+  description = "List of IP ranges that are allowed to access the Kubernetes API server"
+  type        = list(string)
+  default     = []
+}
