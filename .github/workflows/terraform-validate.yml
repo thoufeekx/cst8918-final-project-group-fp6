@@ -12,10 +12,10 @@ jobs:
     environment: production
     
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2.3.0
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: "1.0.0"
 
@@ -28,14 +28,14 @@ jobs:
       working-directory: terraform
 
     - name: Run TFSec
-      uses: aquasecurity/tfsec@v1.30.1
+      uses: aquasecurity/tfsec@v1
       with:
         working_dir: terraform
         fail_on_violations: true
         skip_check: "check:tfsec:aws:ec2:EnsureEC2InstanceIsInVPC"
 
     - name: Run TFLint
-      uses: terraform-linters/tflint-action@v3.1.0
+      uses: terraform-linters/tflint-action@v2
       with:
         working_directory: terraform
         config_file: .tflint.hcl

@@ -10,15 +10,15 @@ jobs:
     environment: production
     
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2.3.0
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: "1.0.0"
 
     - name: TFLint
-      uses: terraform-linters/tflint-action@v3.1.0
+      uses: terraform-linters/tflint-action@v2
       with:
         working_directory: terraform
         config_file: .tflint.hcl
@@ -40,7 +40,7 @@ jobs:
         TF_LOG: "ERROR"
 
     - name: Upload Plan
-      uses: actions/upload-artifact@v3.2.0
+      uses: actions/upload-artifact@v3
       with:
         name: terraform-plan
         path: terraform/tfplan
