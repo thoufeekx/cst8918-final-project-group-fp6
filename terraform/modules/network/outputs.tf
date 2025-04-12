@@ -1,3 +1,8 @@
+output "resource_group_name" {
+  value       = azurerm_resource_group.network.name
+  description = "Name of the network resource group"
+}
+
 output "vnet_id" {
   value       = azurerm_virtual_network.main.id
   description = "ID of the created virtual network"
