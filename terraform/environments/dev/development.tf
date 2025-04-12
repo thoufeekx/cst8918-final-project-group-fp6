@@ -6,18 +6,17 @@ variable "dev_mode" {
 
 locals {
   # Development-specific security settings
-  dev_api_access = true
-  dev_network_rules = true
+  dev_api_access = var.dev_mode
+  dev_network_rules = var.dev_mode
 }
 
-# Development-specific overrides
+# Override API access settings for development
 resource "azurerm_kubernetes_cluster" "aks" {
-  # Override API access settings for development
   api_server_authorized_ip_ranges = local.dev_api_access ? ["0.0.0.0/0"] : var.api_server_authorized_ip_ranges
 }
 
+# Override network security rules for development
 resource "azurerm_network_security_group" "aks" {
-  # Override network security rules for development
   security_rule {
     name                       = "dev-allow-all-outbound"
     priority                   = 100
