@@ -1,0 +1,46 @@
+name: Terraform Plan & TFLint
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: "1.0.0"
+
+    - name: TFLint
+      uses: terraform-linters/tflint-action@v2
+      with:
+        working_directory: terraform
+        config_file: .tflint.hcl
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: terraform
+      env:
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+      working-directory: terraform
+      env:
+        TF_IN_AUTOMATION: "true"
+        TF_LOG: "ERROR"
+
+    - name: Upload Plan
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-plan
+        path: terraform/tfplan
