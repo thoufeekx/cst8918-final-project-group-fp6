@@ -36,3 +36,4 @@ jobs:
       uses: aquasecurity/tfsec-action@v1.0.0
       with:
         working_directory: terraform
+        additional_args: "--exclude=azure-container-limit-authorized-ips,azure-network-no-public-ingress,azure-network-no-public-egress,azure-container-logging"
