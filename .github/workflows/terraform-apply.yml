@@ -27,7 +27,7 @@ jobs:
         terraform_version: "1.0.0"
 
     - name: Download Plan
-      uses: actions/download-artifact@latest
+      uses: actions/download-artifact@v4.2.1
       with:
         name: terraform-plan
         path: terraform
