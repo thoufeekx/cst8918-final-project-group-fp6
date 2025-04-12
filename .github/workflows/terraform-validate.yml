@@ -28,7 +28,7 @@ jobs:
       working-directory: terraform
 
     - name: Run TFSec
-      uses: aquasecurity/tfsec-action@latest
+      uses: aquasecurity/tfsec-action@v1.0.3
       with:
         working_dir: terraform
         fail_on_violations: true
