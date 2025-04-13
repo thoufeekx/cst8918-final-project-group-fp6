@@ -32,7 +32,7 @@ jobs:
       working-directory: terraform
 
     - name: Run TFLint
-      uses: terraform-linters/tflint-action@v3
+      uses: terraform-linters/tflint-action@v1
       with:
         working_directory: terraform
         config_file: .tflint.hcl
