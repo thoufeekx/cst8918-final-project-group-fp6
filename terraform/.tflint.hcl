@@ -26,22 +26,10 @@ rule "azurerm_name" {
   enabled = true
 }
 
-rule "azurerm_location" {
-  enabled = true
-}
-
 rule "azurerm_tags" {
   enabled = true
 }
 
-rule "azurerm_resource_group" {
-  enabled = true
-}
-
 rule "azurerm_security_group_rule" {
-  enabled = true
-}
-
-rule "azurerm_network_security_group" {
   enabled = true
 }
