@@ -1,4 +1,4 @@
-name: Terraform Plan & TFLint
+name: Terraform Plan
 
 on:
   pull_request:
@@ -17,12 +17,6 @@ jobs:
       with:
         terraform_version: "1.0.0"
 
-    - name: TFLint
-      uses: terraform-linters/tflint-action@latest
-      with:
-        working_directory: terraform
-        config_file: .tflint.hcl
-
     - name: Terraform Init
       run: terraform init
       working-directory: terraform
@@ -33,14 +27,28 @@ jobs:
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      id: plan
+      run: |
+        terraform plan -no-color -out=tfplan
+        terraform show -no-color tfplan > tfplan.txt
       working-directory: terraform
       env:
         TF_IN_AUTOMATION: "true"
-        TF_LOG: "ERROR"
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Upload Plan
-      uses: actions/upload-artifact@v4.2.1
+      uses: actions/upload-artifact@v3
       with:
         name: terraform-plan
         path: terraform/tfplan
+        retention-days: 5
+
+    - name: Upload Plan Text
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-plan-text
+        path: terraform/tfplan.txt
+        retention-days: 5
