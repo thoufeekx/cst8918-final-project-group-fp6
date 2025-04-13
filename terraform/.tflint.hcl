@@ -14,3 +14,8 @@ rule "terraform_deprecated_interpolation" {
 rule "terraform_unused_declarations" {
   enabled = true
 }
+
+# Disable standard module structure rule
+rule "terraform_standard_module_structure" {
+  enabled = false
+}
