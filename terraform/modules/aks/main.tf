@@ -8,7 +8,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   default_node_pool {
     name                = "default"
     node_count          = 1
-    vm_size             = "Standard_B1s"  # Smallest VM size for free tier
+    vm_size             = "Standard_B2s"  # Changed to meet minimum requirements
     vnet_subnet_id      = var.subnet_id
   }
 
@@ -20,9 +20,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
     network_policy    = "azure"
-    service_cidr      = "172.16.0.0/16"  # Non-overlapping CIDR
+    service_cidr      = "172.16.0.0/16"
     dns_service_ip    = "172.16.0.10"
-    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
