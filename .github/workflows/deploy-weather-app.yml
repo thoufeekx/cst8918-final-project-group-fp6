@@ -1,0 +1,66 @@
+name: Deploy Weather App
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: fp6acr.azurecr.io
+  IMAGE_NAME: weather-app
+  NAMESPACE: cst8918
+  RESOURCE_GROUP: fp6-network-rg
+  DOCKER_HUB_IMAGE: thoufeekx/cst8918-a01-weather-app:latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Login to ACR
+      run: |
+        az acr login --name fp6acr
+
+    - name: Pull from Docker Hub and Push to ACR
+      run: |
+        docker pull $DOCKER_HUB_IMAGE
+        docker tag $DOCKER_HUB_IMAGE $REGISTRY/$IMAGE_NAME:latest
+        docker push $REGISTRY/$IMAGE_NAME:latest
+
+    - name: Get AKS Credentials
+      run: |
+        az aks get-credentials --resource-group $RESOURCE_GROUP --name fp6-aks-prod
+
+    - name: Create Namespace
+      run: |
+        kubectl create namespace $NAMESPACE || true
+
+    - name: Create Secret
+      run: |
+        kubectl create secret generic weather \
+          --from-literal=api-key=${{ secrets.OPENWEATHER_API_KEY }} \
+          -n $NAMESPACE \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Deploy Application
+      run: |
+        kubectl apply -f k8s/namespace.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/deployment.yaml
+
+    - name: Get Service Details
+      run: |
+        echo "Waiting for service IP..."
+        kubectl get service -n $NAMESPACE
+        echo "Waiting for external IP..."
+        kubectl get service weather-app-service -n $NAMESPACE --watch
