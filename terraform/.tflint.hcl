@@ -21,55 +21,7 @@ rule "terraform_unused_declarations" {
   enabled = true
 }
 
-rule "terraform_invalid_number" {
-  enabled = true
-}
-
-rule "terraform_invalid_string" {
-  enabled = true
-}
-
-rule "terraform_invalid_list" {
-  enabled = true
-}
-
-rule "terraform_invalid_map" {
-  enabled = true
-}
-
-rule "terraform_invalid_block" {
-  enabled = true
-}
-
-rule "terraform_invalid_attribute" {
-  enabled = true
-}
-
-rule "terraform_invalid_reference" {
-  enabled = true
-}
-
-rule "terraform_invalid_function" {
-  enabled = true
-}
-
-rule "terraform_invalid_block_type" {
-  enabled = true
-}
-
-rule "terraform_invalid_attribute_type" {
-  enabled = true
-}
-
-rule "terraform_invalid_count" {
-  enabled = true
-}
-
-rule "terraform_invalid_for_each" {
-  enabled = true
-}
-
-# Basic AzureRM rules
+# AzureRM rules
 rule "azurerm_name" {
   enabled = true
 }
