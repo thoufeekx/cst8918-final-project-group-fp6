@@ -18,7 +18,7 @@ jobs:
         terraform_version: "1.0.0"
 
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -reconfigure
       working-directory: terraform
       env:
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
