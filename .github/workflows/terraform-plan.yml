@@ -39,16 +39,16 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Upload Plan
-      uses: actions/upload-artifact@v3.2.0
+    - name: Add Plan Output to PR
+      uses: dawidd6/action-download-artifact@v2
       with:
+        workflow: terraform-plan.yml
         name: terraform-plan
         path: terraform/tfplan
-        retention-days: 5
 
-    - name: Upload Plan Text
-      uses: actions/upload-artifact@v3.2.0
+    - name: Add Plan Text to PR
+      uses: dawidd6/action-download-artifact@v2
       with:
+        workflow: terraform-plan.yml
         name: terraform-plan-text
         path: terraform/tfplan.txt
-        retention-days: 5
