@@ -29,7 +29,3 @@ rule "azurerm_name" {
 rule "azurerm_tags" {
   enabled = true
 }
-
-rule "azurerm_security_group_rule" {
-  enabled = true
-}
