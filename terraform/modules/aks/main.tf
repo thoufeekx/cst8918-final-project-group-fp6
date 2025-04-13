@@ -32,16 +32,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     environment = var.environment
     project     = "fp6"
   }
-
-  # Grant ACR pull access to the system-assigned identity
-  identity_profile {
-    kubeletidentity {
-      type = "SystemAssigned"
-    }
-  }
 }
 
-# Grant ACR pull access to the system-assigned identity
+# Grant ACR pull access to the AKS identity
 resource "azurerm_role_assignment" "aks_acr" {
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
