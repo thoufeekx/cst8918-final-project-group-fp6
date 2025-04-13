@@ -7,11 +7,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name                = "default"
-    node_count          = var.node_count
-    min_count           = var.min_node_count
-    max_count           = var.max_node_count
-    vm_size             = "Standard_B2s"
-    enable_auto_scaling = var.enable_auto_scaling
+    node_count          = 1
+    vm_size             = "Standard_B1s"  # Smallest VM size for free tier
     vnet_subnet_id      = var.subnet_id
   }
 
@@ -23,6 +20,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
     network_policy    = "azure"
+    service_cidr      = "172.16.0.0/16"  # Non-overlapping CIDR
+    dns_service_ip    = "172.16.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
@@ -31,7 +31,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   tags = {
     environment = var.environment
-    project     = "cst8918-final"
+    project     = "fp6"
   }
 }
 
