@@ -40,14 +40,14 @@ jobs:
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Upload Plan
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.2.0
       with:
         name: terraform-plan
         path: terraform/tfplan
         retention-days: 5
 
     - name: Upload Plan Text
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.2.0
       with:
         name: terraform-plan-text
         path: terraform/tfplan.txt
