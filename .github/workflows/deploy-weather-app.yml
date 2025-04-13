@@ -75,4 +75,6 @@ jobs:
         echo "Waiting for service IP..."
         kubectl get service -n $NAMESPACE
         echo "Waiting for external IP..."
-        kubectl get service weather-app-service -n $NAMESPACE --watch
+        kubectl get service weather-app-service -n $NAMESPACE
+        echo "Service is deployed. You can access it at:"
+        kubectl get service weather-app-service -n $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
