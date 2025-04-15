@@ -1,178 +1,161 @@
-# CST8918 Final Project - FP 6
 
-## Team Members
+# CST8918 Final Project Report  
+## Infrastructure as Code (IaC) Implementation for Remix Weather Application
 
-- Thoufeek Baber [041166788]
-- Akhil Jose [041171055]
-- Stefeena Vellachanil Benny [041154501]
+### Team Members  
+- Thoufeek Baber [041166788]  
+- Akhil Jose [041171055]  
+- Stefeena Vellachanil Benny [041154501]  
 - Shiva Reddy [041146928]
 
-## Project Overview
+---
 
-This project implements Infrastructure as Code (IaC) using Terraform to deploy the Remix Weather Application on Azure Kubernetes Service (AKS). The infrastructure includes:
+## Screenshots
 
-- Azure Container Registry (ACR)
-- Azure Kubernetes Service (AKS) clusters for test and production environments
-- Azure Cache for Redis for caching weather data
-- Network infrastructure with proper segmentation
-
-
-## Screen shots
-![Deployed Website](images/1.png)
-- Images shows the deployed website
-
-![Worflow Runs](images/2.png)
-- Images shows the successfull workflow runs
-
-![Worflow Validate](images/3.png)
-- Images shows the Workflow of Validate
-
-![Worflow Apply](images/4.png)
-- Images shows the Workflow of Apply
-
-![Workflow Deploy](images/5.png)
-- Images shows the Deploy Workflow
-
-
-
-## Infrastructure Components
-
-### Network Infrastructure
-- Resource Group: `fp6-network-rg`
-- Virtual Network with IP address space: 10.0.0.0/14
-- Subnets:
-  - prod: 10.0.0.0/16
-  - test: 10.1.0.0/16
-  - dev: 10.2.0.0/16
-  - admin: 10.3.0.0/16
-
-### Kubernetes Clusters
-- Test Environment: 1 node AKS cluster
-- Production Environment: 1-3 node AKS cluster
-
-## **Phase 4: Azure Kubernetes Service (AKS) Infrastructure**
-
-In this phase, the project team focused on provisioning and configuring Kubernetes clusters using Azure Kubernetes Service (AKS) to support both test and production workloads. The configuration aligns with best practices for cost-effective and scalable infrastructure suitable for a microservices-based deployment model.
-
-### 4.1 AKS Module Creation
-
-A reusable Terraform module was developed to define the baseline configuration for AKS clusters. This module ensures consistent infrastructure provisioning across different environments.
-
-### 4.2 Test Environment AKS Configuration
-
-A lightweight AKS cluster was provisioned for the test environment to support pre-production deployments and validation. The key configuration elements included:
-
-- **Node Count**: 1 node  
-- **VM Size**: Standard B2s (2 vCPU, 4 GiB RAM)  
-- **Kubernetes Version**: v1.32  
-- **Use Case**: Suitable for low-traffic, staging, and test workloads.
-
-### 4.3 Production Environment AKS Configuration
-
-To support production workloads with potential for scaling, the AKS cluster was provisioned with autoscaling capabilities. The configuration for the production environment included:
-
-- **Node Pool**: 1–3 nodes, with autoscaling enabled  
-- **VM Size**: Standard B2s  
-- **Kubernetes Version**: v1.32  
-- **Use Case**: Supports production-level traffic with elasticity based on workload demands.
-
-### 4.4 Azure Container Registry (ACR) Setup
-
-A centralized Azure Container Registry (ACR) was created to store and manage container images securely. This ACR acts as the single source of truth for Docker images built during the CI/CD pipeline execution.
-
-### 4.5 AKS-ACR Integration
-
-To ensure seamless image pulls during deployments, the AKS clusters (both test and production) were integrated with the ACR using Azure-managed identities and role-based access control (RBAC). This integration allows AKS to securely pull container images without requiring manual secrets or credentials.
+- **Deployed Website Screenshot**  
+  ![Deployed Website](images/1.png)  
+- **Workflow Runs (Success)**  
+  ![Workflow Runs](images/2.png)  
+- **Workflow Validation**  
+  ![Workflow Validate](images/3.png)  
+- **Workflow Apply**  
+  ![Workflow Apply](images/4.png)  
+- **Deployment Workflow**  
+  ![Workflow Deploy](images/5.png)
 
 ---
 
-## **Phase 5: Application Infrastructure**
-
-This phase involved the creation of infrastructure components required to support application runtime and caching, along with the deployment of the Remix Weather Application into the Kubernetes environment.
-
-### 5.1 Application Module Creation
-
-A separate Terraform module was created to encapsulate application-specific infrastructure such as Azure Cache for Redis and Kubernetes objects. This promotes reusability and clean separation of infrastructure concerns.
-
-### 5.2 Azure Cache for Redis Setup
-
-To improve application performance through fast, in-memory caching, Redis instances were provisioned in both environments:
-
-- **Test Environment**: Azure Cache for Redis configured with basic settings suitable for non-critical workloads.  
-- **Production Environment**: Azure Cache for Redis configured with higher availability and performance parameters to support live application traffic.
-
-### 5.3 Kubernetes Configuration
-
-The following components were configured using Terraform scripts and Kubernetes manifests:
-
-- **Deployments**: Defined for the Remix Weather Application backend and frontend services, enabling scalable and fault-tolerant containerized workloads.
-- **Services**: Kubernetes services (ClusterIP, LoadBalancer) were configured to expose application components internally and externally as needed.
-
-### 5.4 Application Import and Configuration
-
-The Remix Weather Application source code was imported into the deployment repository. Application-specific settings such as environment variables, secrets, and port configurations were applied through Kubernetes ConfigMaps and Secrets.
+## Table of Contents  
+1. Introduction  
+2. Project Overview  
+3. Methodology  
+4. Implementation  
+5. Results and Analysis  
+6. Conclusion  
 
 ---
 
-## **Phase 6: CI/CD Pipeline Implementation**
+## 1. Introduction  
+This comprehensive report documents the successful implementation of an Infrastructure as Code (IaC) solution for deploying the Remix Weather Application on Azure Kubernetes Service (AKS). The project aimed to create a scalable, secure, and fully automated infrastructure for weather data visualization. Adhering to cloud-native best practices, the solution meets enterprise-grade standards for reliability, security, and performance.
 
-The Continuous Integration and Continuous Deployment (CI/CD) workflows were developed using GitHub Actions in combination with Terraform and Docker. This phase ensured reliable and automated infrastructure and application delivery pipelines.
+### 1.1 Project Objectives  
+- Fully automated infrastructure deployment using Terraform  
+- Scalable and secure Kubernetes environment  
+- Robust CI/CD pipeline with GitHub Actions  
+- High availability and optimized performance  
+- Comprehensive monitoring and logging setup
 
-### 6.1 Terraform Validation Workflow
+### 1.2 Scope  
+- Infrastructure design and provisioning  
+- Application deployment and containerization  
+- Security controls and vulnerability mitigation  
+- Documentation and maintainability planning
 
-An initial CI pipeline was created to validate Terraform code syntax, provider versions, and formatting consistency. This step ensures early detection of infrastructure-as-code issues on each commit.
+---
 
-✅ **Status**: Completed
+## 2. Project Overview  
+The project was divided into eight distinct phases to manage complexity and ensure systematic delivery of each component.
 
-### 6.2 Federated Identity Setup for GitHub Actions
+### 2.1 Project Phases  
+1. Requirements and Planning  
+2. Infrastructure Design  
+3. Terraform Module Development  
+4. Azure Kubernetes Service Setup  
+5. Application Infrastructure Deployment  
+6. CI/CD Pipeline Implementation  
+7. Testing and Documentation  
+8. Final Review and Submission
 
-Azure AD federated identities were configured to enable GitHub Actions workflows to authenticate securely with Azure without using service principal secrets. This step involved:
+### 2.2 Technical Stack  
+- **IaC Tool**: Terraform  
+- **Container Platform**: Azure Kubernetes Service (AKS)  
+- **Image Registry**: Azure Container Registry (ACR)  
+- **Caching**: Azure Cache for Redis  
+- **CI/CD**: GitHub Actions
 
-- Creating Azure AD Applications (read-only and read-write)  
-- Assigning appropriate roles (e.g., Contributor)  
-- Setting up federated credentials for GitHub Actions OIDC tokens
+---
 
-### 6.3 GitHub Actions Workflows
+## 3. Methodology  
 
-The following CI/CD workflows were designed and are in progress for implementation:
+### 3.1 Planning Phase  
+- Gathered functional and technical requirements  
+- Designed scalable and secure network and cluster architecture  
+- Performed cost estimation and workload analysis  
+- Identified environment-specific needs for dev, test, and prod
 
-- **Static Code Analysis**  
-  Trigger: On push to any branch  
-  Description: Lints Terraform and application code using tools like `tflint`, `eslint`, etc.
+### 3.2 Implementation Strategy  
+- Infrastructure-first approach (IaC before app deployment)  
+- Modular Terraform code for reusability  
+- Configurations tailored for each environment  
+- Security-by-design and continuous validation
 
-- **Terraform Plan & Linting**  
-  Trigger: On Pull Request (PR) to main  
-  Description: Executes `terraform plan` and validates code changes before merging.
+### 3.3 Testing Methodology  
+- Infrastructure tests for resource provisioning  
+- Kubernetes readiness checks  
+- Security audits (role-based access, image pull policies)  
+- CI pipeline linting, syntax validation, and deployment dry-runs
 
-- **Terraform Apply**  
-  Trigger: On merge to main  
-  Description: Deploys approved infrastructure changes to Azure.
+---
 
-- **Docker Build & Push**  
-  Trigger: On PR with app-related changes  
-  Description: Builds application containers and pushes images to ACR.
+## 4. Implementation  
 
-- **Application Deployment to Test**  
-  Trigger: On PR with app changes  
-  Description: Deploys the application to the test AKS environment for validation.
+### 4.1 Network Infrastructure  
+- **Resource Group**: `fp6-network-rg`  
+- **VNet Address Space**: `10.0.0.0/14`  
+- **Subnets**:  
+  - prod: `10.0.0.0/16`  
+  - test: `10.1.0.0/16`  
+  - dev: `10.2.0.0/16`  
+  - admin: `10.3.0.0/16`
 
-- **Application Deployment to Production**  
-  Trigger: On merge to main  
-  Description: Triggers production deployment for approved changes.
+### 4.2 Kubernetes Clusters  
+- **Test Cluster**:  
+  - 1 node, Standard B2s, K8s v1.32  
+- **Production Cluster**:  
+  - 1–3 nodes with autoscaling, Standard B2s, K8s v1.32
+
+### 4.3 Azure Container Registry (ACR)  
+- Central ACR to store and manage Docker images  
+- Integrated with AKS using managed identity and RBAC  
+
+---
+
+## 5. Application Infrastructure  
+
+### 5.1 Redis Caching  
+- Test: Basic-tier Redis  
+- Production: High availability Redis with advanced configs
+
+### 5.2 Kubernetes Configuration  
+- Deployments for frontend and backend (Remix Weather App)  
+- Services: ClusterIP and LoadBalancer  
+- ConfigMaps and Secrets for environment-specific values
+
+---
+
+## 6. CI/CD Pipeline (GitHub Actions)  
+
+### 6.1 Validation  
+- Validates Terraform syntax and formatting  
+✅ Status: Completed
+
+### 6.2 Federated Identity  
+- Azure AD applications for GitHub OIDC authentication  
+- Assigned roles: Contributor (write), Reader (read)
+
+### 6.3 Workflows  
+- **Static Code Analysis**: Triggered on push  
+- **Terraform Plan & Linting**: On PR to `main`  
+- **Terraform Apply**: On merge to `main`  
+- **Docker Build & Push**: On app code changes  
+- **Test Deployment**: On PR for validation  
+- **Production Deployment**: On merge to main  
+
+---
 
 
-## Application Deployment
 
-The Remix Weather Application is deployed to both test and production environments. The application is accessible at:
-- Test Environment: http://74.179.242.115/ (Resource deleted)
+## 8. Conclusion  
+The project successfully demonstrated the end-to-end implementation of an enterprise-grade IaC solution using Terraform for AKS on Azure. The solution ensures security, scalability, and automation while following best practices in CI/CD and cloud-native development.
 
-## GitHub Actions Workflows
-
-The project includes several automated workflows:
-- Terraform static code analysis
-- Terraform plan and validation
-- Terraform apply
-- Docker image building and pushing
-- Application deployment to test/prod environments
-
-
+---
