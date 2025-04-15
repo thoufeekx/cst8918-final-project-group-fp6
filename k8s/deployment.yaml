@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: weather-app-deployment
+  name: weather-app-deployment-group-6
   namespace: cst8918
   labels:
-    app: weather-app
+    app: weather-app-fp6
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: weather-app
+      app: weather-app-fp6
   template:
     metadata:
       labels:
-        app: weather-app
+        app: weather-app-fp6
     spec:
       containers:
         - name: weather-app-container
