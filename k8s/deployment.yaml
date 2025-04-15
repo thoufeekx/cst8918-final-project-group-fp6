@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+
   name: weather-app-deployment-group-6
+
   namespace: cst8918
   labels:
     app: weather-app-fp6

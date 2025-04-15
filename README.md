@@ -1,168 +1,215 @@
-# CST8918 Final Project - FP 6
 
-## Team Members
+# CST8918 Final Project - Azure Infrastructure with Terraform
 
-- [Thoufeek](https://github.com/thoufeekx)
+## Final Report: Phases 1-3 Implementation
 
 ## Project Overview
+This project implements a comprehensive cloud infrastructure on Microsoft Azure using Terraform and GitHub Actions for CI/CD. The infrastructure follows a multi-environment approach with proper networking, security, and application deployment pipelines to support a Kubernetes-based application architecture.
 
-This project implements Infrastructure as Code (IaC) using Terraform to deploy the Remix Weather Application on Azure Kubernetes Service (AKS). The infrastructure includes:
+## Team Members
+- Akhil Jose
+- Thoufeek
 
-- Azure Container Registry (ACR)
-- Azure Kubernetes Service (AKS) clusters for test and production environments
-- Azure Cache for Redis for caching weather data
-- Network infrastructure with proper segmentation
+## Implementation Status
 
-## Infrastructure Components
+### Phase 1: Initial Setup and Repository Configuration
 
-### Network Infrastructure
-- Resource Group: `fp6-network-rg`
-- Virtual Network with IP address space: 10.0.0.0/14
-- Subnets:
-  - prod: 10.0.0.0/16
-  - test: 10.1.0.0/16
-  - dev: 10.2.0.0/16
-  - admin: 10.3.0.0/16
+#### Completed Tasks
+- **Basic Project Structure**: Created a well-organized directory structure with separate modules for each infrastructure component.
+- **README Documentation**: Initial documentation created to describe the project.
+- **.gitignore Configuration**: Set up to exclude local Terraform state files, .terraform directories, and other temporary files.
+- **Terraform Provider Configuration**: Configured Azure provider with appropriate version constraints.
 
-### Kubernetes Clusters
-- Test Environment: 1 node AKS cluster
-- Production Environment: 1-3 node AKS cluster
+```hcl
+# terraform/provider.tf
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
+    }
+  }
+  required_version = ">= 1.0"
+}
+```
 
-## **Phase 4: Azure Kubernetes Service (AKS) Infrastructure**
+#### In Progress Tasks
+- **GitHub Repository Settings**: 
+  - Team members and professor collaboration setup
+  - Branch protection rules configuration
+  - PR review requirements implementation
 
-In this phase, the project team focused on provisioning and configuring Kubernetes clusters using Azure Kubernetes Service (AKS) to support both test and production workloads. The configuration aligns with best practices for cost-effective and scalable infrastructure suitable for a microservices-based deployment model.
+#### Technical Details
+- The project uses Terraform v1.0+ with the Azure provider v3.0+
+- The repository structure follows infrastructure-as-code best practices with modular components
+- Initial CI/CD pipeline setup with GitHub Actions for Terraform validation
 
-### 4.1 AKS Module Creation
+```yaml
+# .github/workflows/terraform-validate.yml
+name: Terraform Validation
 
-A reusable Terraform module was developed to define the baseline configuration for AKS clusters. This module ensures consistent infrastructure provisioning across different environments.
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
 
-### 4.2 Test Environment AKS Configuration
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+    # Additional steps for validation and linting
+```
 
-A lightweight AKS cluster was provisioned for the test environment to support pre-production deployments and validation. The key configuration elements included:
+### Phase 2: Backend Infrastructure
 
-- **Node Count**: 1 node  
-- **VM Size**: Standard B2s (2 vCPU, 4 GiB RAM)  
-- **Kubernetes Version**: v1.32  
-- **Use Case**: Suitable for low-traffic, staging, and test workloads.
+#### Completed Tasks
+- **Backend Module Structure**: Created a reusable module for Azure Storage backend configuration.
 
-### 4.3 Production Environment AKS Configuration
+#### In Progress Tasks
+- **Azure Blob Storage Backend**: Configuration of storage account and container for Terraform state.
+- **Backend Testing**: Validation of state storage and locking mechanisms.
+- **Documentation**: Comprehensive documentation of the backend setup process.
 
-To support production workloads with potential for scaling, the AKS cluster was provisioned with autoscaling capabilities. The configuration for the production environment included:
+#### Technical Details
+- The backend setup uses a dedicated Terraform configuration in `terraform/backend-setup/`
+- Storage account name uses a random suffix to ensure global uniqueness
+- State files are stored in a private container with versioning enabled
 
-- **Node Pool**: 1–3 nodes, with autoscaling enabled  
-- **VM Size**: Standard B2s  
-- **Kubernetes Version**: v1.32  
-- **Use Case**: Supports production-level traffic with elasticity based on workload demands.
+```hcl
+# terraform/backend-setup/main.tf
+module "backend" {
+  source = "../modules/backend"
 
-### 4.4 Azure Container Registry (ACR) Setup
+  resource_group_name  = "tfstate-fp6-rg"
+  storage_account_name = "tfstate${random_string.suffix.result}"
+  container_name       = "tfstate"
+  location             = "eastus"
+}
+```
 
-A centralized Azure Container Registry (ACR) was created to store and manage container images securely. This ACR acts as the single source of truth for Docker images built during the CI/CD pipeline execution.
+- The backend setup provides convenient output for initializing the main Terraform configuration:
 
-### 4.5 AKS-ACR Integration
+```hcl
+# terraform/backend-setup/outputs.tf
+output "backend_init_cli" {
+  value = <<EOF
+terraform init \
+  -backend-config="resource_group_name=${module.backend.resource_group_name}" \
+  -backend-config="storage_account_name=${module.backend.storage_account_name}" \
+  -backend-config="container_name=${module.backend.container_name}" \
+  -backend-config="key=terraform.tfstate"
+EOF
+}
+```
 
-To ensure seamless image pulls during deployments, the AKS clusters (both test and production) were integrated with the ACR using Azure-managed identities and role-based access control (RBAC). This integration allows AKS to securely pull container images without requiring manual secrets or credentials.
+### Phase 3: Network Infrastructure
 
----
+#### Completed Tasks
+- **Network Module**: Created a reusable module for Azure networking resources.
 
-## **Phase 5: Application Infrastructure**
+#### In Progress Tasks
+- **VNet and Subnet Configuration**: 
+  - VNet with CIDR range 10.0.0.0/14
+  - Production subnet (10.0.0.0/16)
+  - Test subnet (10.1.0.0/16)
+  - Development subnet (10.2.0.0/16)
+  - Admin subnet (10.3.0.0/16)
+- **Network Security Groups**: Configuration of NSGs for secure access control.
+- **Network Peering**: Configuration of network peering if needed.
 
-This phase involved the creation of infrastructure components required to support application runtime and caching, along with the deployment of the Remix Weather Application into the Kubernetes environment.
+#### Technical Details
+- The network module creates a resource group dedicated to networking resources
+- Virtual network is configured with a large address space to accommodate multiple environments
+- Each environment has its own subnet with proper address space allocation
+- Network security groups are configured with appropriate inbound and outbound rules
 
-### 5.1 Application Module Creation
+```hcl
+# terraform/modules/network/main.tf (partial)
+resource "azurerm_virtual_network" "main" {
+  name                = "fp6-vnet"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+  address_space       = [var.vnet_cidr]  # 10.0.0.0/14
+}
 
-A separate Terraform module was created to encapsulate application-specific infrastructure such as Azure Cache for Redis and Kubernetes objects. This promotes reusability and clean separation of infrastructure concerns.
+# Production subnet
+resource "azurerm_subnet" "prod" {
+  name                 = "fp6-prod-subnet"
+  resource_group_name  = azurerm_resource_group.network.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.0.0/16"]
+}
+```
 
-### 5.2 Azure Cache for Redis Setup
+## Challenges and Solutions
 
-To improve application performance through fast, in-memory caching, Redis instances were provisioned in both environments:
+### Challenge 1: Backend State Management
+**Challenge**: Setting up a secure and reliable backend for Terraform state management.
 
-- **Test Environment**: Azure Cache for Redis configured with basic settings suitable for non-critical workloads.  
-- **Production Environment**: Azure Cache for Redis configured with higher availability and performance parameters to support live application traffic.
+**Solution**: Created a dedicated module for backend setup with proper security configurations and versioning enabled. The module outputs a ready-to-use initialization command to simplify the setup process.
 
-### 5.3 Kubernetes Configuration
+### Challenge 2: Network Segmentation
+**Challenge**: Designing a network architecture that properly isolates different environments while allowing necessary communication.
 
-The following components were configured using Terraform scripts and Kubernetes manifests:
+**Solution**: Implemented a hierarchical network design with a large VNet and separate subnets for each environment. Network security groups are configured to control traffic between subnets.
 
-- **Deployments**: Defined for the Remix Weather Application backend and frontend services, enabling scalable and fault-tolerant containerized workloads.
-- **Services**: Kubernetes services (ClusterIP, LoadBalancer) were configured to expose application components internally and externally as needed.
+### Challenge 3: CI/CD Pipeline Integration
+**Challenge**: Setting up a CI/CD pipeline that validates Terraform configurations without requiring credentials for every push.
 
-### 5.4 Application Import and Configuration
+**Solution**: Implemented a two-stage approach with:
+1. Validation workflow that runs on every push without backend initialization
+2. Plan and apply workflows that run only on PRs and merges to main branch
 
-The Remix Weather Application source code was imported into the deployment repository. Application-specific settings such as environment variables, secrets, and port configurations were applied through Kubernetes ConfigMaps and Secrets.
+## Next Steps
 
----
+1. **Complete Phase 2**: Finalize the Azure Blob Storage backend configuration and documentation.
+2. **Complete Phase 3**: Finish the network infrastructure implementation with all subnets and security groups.
+3. **Prepare for Phase 4**: Begin setting up the AKS infrastructure for test and production environments.
 
-## **Phase 6: CI/CD Pipeline Implementation**
+## Setup Instructions
 
-The Continuous Integration and Continuous Deployment (CI/CD) workflows were developed using GitHub Actions in combination with Terraform and Docker. This phase ensured reliable and automated infrastructure and application delivery pipelines.
+### Prerequisites
+- Azure CLI installed and configured
+- Terraform CLI (v1.0+) installed
+- GitHub account with access to the repository
 
-### 6.1 Terraform Validation Workflow
+### Initial Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/thoufeekx/cst8918-final-project-group-fp6.git
+   cd cst8918-final-project-group-fp6
+   ```
 
-An initial CI pipeline was created to validate Terraform code syntax, provider versions, and formatting consistency. This step ensures early detection of infrastructure-as-code issues on each commit.
+2. Set up the Terraform backend:
+   ```bash
+   cd terraform/backend-setup
+   terraform init
+   terraform apply
+   ```
 
-✅ **Status**: Completed
+3. Note the backend configuration output and use it to initialize the main Terraform configuration:
+   ```bash
+   cd ../
+   # Use the command from the backend setup output
+   terraform init \
+     -backend-config="resource_group_name=<RESOURCE_GROUP_NAME>" \
+     -backend-config="storage_account_name=<STORAGE_ACCOUNT_NAME>" \
+     -backend-config="container_name=<CONTAINER_NAME>" \
+     -backend-config="key=terraform.tfstate"
+   ```
 
-### 6.2 Federated Identity Setup for GitHub Actions
+4. Deploy the network infrastructure:
+   ```bash
+   terraform apply -target=module.network
+   ```
 
-Azure AD federated identities were configured to enable GitHub Actions workflows to authenticate securely with Azure without using service principal secrets. This step involved:
-
-- Creating Azure AD Applications (read-only and read-write)  
-- Assigning appropriate roles (e.g., Contributor)  
-- Setting up federated credentials for GitHub Actions OIDC tokens
-
-### 6.3 GitHub Actions Workflows
-
-The following CI/CD workflows were designed and are in progress for implementation:
-
-- **Static Code Analysis**  
-  Trigger: On push to any branch  
-  Description: Lints Terraform and application code using tools like `tflint`, `eslint`, etc.
-
-- **Terraform Plan & Linting**  
-  Trigger: On Pull Request (PR) to main  
-  Description: Executes `terraform plan` and validates code changes before merging.
-
-- **Terraform Apply**  
-  Trigger: On merge to main  
-  Description: Deploys approved infrastructure changes to Azure.
-
-- **Docker Build & Push**  
-  Trigger: On PR with app-related changes  
-  Description: Builds application containers and pushes images to ACR.
-
-- **Application Deployment to Test**  
-  Trigger: On PR with app changes  
-  Description: Deploys the application to the test AKS environment for validation.
-
-- **Application Deployment to Production**  
-  Trigger: On merge to main  
-  Description: Triggers production deployment for approved changes.
-
-
-## Application Deployment
-
-The Remix Weather Application is deployed to both test and production environments. The application is accessible at:
-- Test Environment: http://74.179.242.115/
-
-## GitHub Actions Workflows
-
-The project includes several automated workflows:
-- Terraform static code analysis
-- Terraform plan and validation
-- Terraform apply
-- Docker image building and pushing
-- Application deployment to test/prod environments
-
-## Screenshots
-
-![GitHub Actions Workflows](screenshots/workflows.png)
-
-## Clean Up
-
-After submission, please delete all Azure resources to avoid additional charges.
-
-## Access Instructions
-
-1. The application is deployed to Azure Kubernetes Service
-2. Access the application at http://74.179.242.115/
-3. View the weather data for Algonquin College, Woodroffe Campus
