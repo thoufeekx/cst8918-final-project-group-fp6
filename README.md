@@ -2,7 +2,10 @@
 
 ## Team Members
 
-- [Thoufeek](https://github.com/thoufeekx)
+- Thoufeek Baber [041166788]
+- Akhil Jose [041171055]
+- Stefeena Vellachanil Benny [041154501]
+- Shiva Reddy [041154500]
 
 ## Project Overview
 
@@ -12,6 +15,28 @@ This project implements Infrastructure as Code (IaC) using Terraform to deploy t
 - Azure Kubernetes Service (AKS) clusters for test and production environments
 - Azure Cache for Redis for caching weather data
 - Network infrastructure with proper segmentation
+
+
+
+## Screen shots
+![Deployed Website](images/1.png)
+- Images shows the deployed website
+
+![Worflow Runs](images/2.png)
+- Images shows the successfull workflow runs
+
+![Worflow Validate](images/3.png)
+- Images shows the Workflow of Validate
+
+![Worflow Apply](images/4.png)
+- Images shows the Workflow of Apply
+
+![Workflow Deploy](images/5.png)
+- Images shows the Deploy Workflow
+
+
+
+
 
 ## Infrastructure Components
 
