@@ -1,3 +1,4 @@
+
 # CST8918 Final Project - Azure Infrastructure with Terraform
 
 ## Final Report: Phases 1-3 Implementation
@@ -212,14 +213,3 @@ resource "azurerm_subnet" "prod" {
    terraform apply -target=module.network
    ```
 
-## Conclusion
-Phases 1-3 of the project have established a solid foundation for the Azure infrastructure. The initial setup, backend configuration, and network infrastructure provide the groundwork for the Kubernetes clusters and application deployment in subsequent phases. The modular approach ensures scalability and maintainability as the project progresses.
-
----
-
-**Status Legend**
-- ✅ = Completed
-- 🚧 = In Progress
-- ❌ = Not Started
-
-**Current Focus**: Completing Phase 2 (Backend Infrastructure) and Phase 3 (Network Infrastructure)

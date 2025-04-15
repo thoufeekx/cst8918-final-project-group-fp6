@@ -1,11 +1,11 @@
 variable "dev_mode" {
-  description = "Enable development mode with more permissive security settings"
+  description = "Enable development mode with more permissive security settings group 6"
   type        = bool
   default     = true
 }
 
 variable "cluster_name" {
-  description = "Name of the AKS cluster"
+  description = "Name of the AKS : CST8918 cluster"
   type        = string
 }
 
