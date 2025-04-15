@@ -5,7 +5,7 @@
 - Thoufeek Baber [041166788]
 - Akhil Jose [041171055]
 - Stefeena Vellachanil Benny [041154501]
-- Shiva Reddy [041154500]
+- Shiva Reddy [041146928]
 
 ## Project Overview
 
@@ -15,7 +15,6 @@ This project implements Infrastructure as Code (IaC) using Terraform to deploy t
 - Azure Kubernetes Service (AKS) clusters for test and production environments
 - Azure Cache for Redis for caching weather data
 - Network infrastructure with proper segmentation
-
 
 
 ## Screen shots
@@ -33,8 +32,6 @@ This project implements Infrastructure as Code (IaC) using Terraform to deploy t
 
 ![Workflow Deploy](images/5.png)
 - Images shows the Deploy Workflow
-
-
 
 
 
@@ -167,7 +164,7 @@ The following CI/CD workflows were designed and are in progress for implementati
 ## Application Deployment
 
 The Remix Weather Application is deployed to both test and production environments. The application is accessible at:
-- Test Environment: http://74.179.242.115/
+- Test Environment: http://74.179.242.115/ (Resource deleted)
 
 ## GitHub Actions Workflows
 
@@ -178,16 +175,4 @@ The project includes several automated workflows:
 - Docker image building and pushing
 - Application deployment to test/prod environments
 
-## Screenshots
 
-![GitHub Actions Workflows](screenshots/workflows.png)
-
-## Clean Up
-
-After submission, please delete all Azure resources to avoid additional charges.
-
-## Access Instructions
-
-1. The application is deployed to Azure Kubernetes Service
-2. Access the application at http://74.179.242.115/
-3. View the weather data for Algonquin College, Woodroffe Campus
